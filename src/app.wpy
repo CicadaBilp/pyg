@@ -1,0 +1,60 @@
+<style lang="less">
+
+@import './icon-font.wxss';
+  page{
+    background-color: #ccc;
+  }
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  constructor () {
+        super();
+        this.use('promisify');
+    }
+  config = {
+    pages: ['pages/index', 'pages/cart','pages/category','pages/my','pages/cart_order','pages/goods_detail'],
+    window: {
+      navigationBarBackgroundColor: '#ff2d4a',
+      navigationBarTitleText: '品优购',
+      navigationBarTextStyle: 'white',
+    },
+    tabBar:{
+      selectedColor: '#ff2d4a',
+      list: [
+        {
+          pagePath: "pages/index",
+          text: "首页",
+          iconPath: "./assets/images/icon_home@3x.png",
+          selectedIconPath: "./assets/images/icon_home_active@3x.png"
+        },
+        {
+          pagePath: "pages/category",
+          text: "分类",
+          iconPath: "./assets/images/icon_category@3x.png",
+          selectedIconPath: "./assets/images/icon_category_active@3x.png"
+        },
+        {
+          pagePath: "pages/cart",
+          text: "购物车",
+          iconPath: "./assets/images/icon_cart@3x.png",
+          selectedIconPath: "./assets/images/icon_cart_active@3x.png"
+        },
+        {
+          pagePath: "pages/my",
+          text: "我的",
+          iconPath: "./assets/images/icon_me@3x.png",
+          selectedIconPath: "./assets/images/icon_me_active@3x.png"
+        }
+      ]
+    }
+  }
+
+  onLaunch() {
+    console.log('on launch')
+  }
+}
+</script>

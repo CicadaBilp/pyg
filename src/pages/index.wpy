@@ -1,0 +1,209 @@
+<style lang="less">
+//引入字体库
+@import '../icon-font.wxss';
+
+swiper {
+  height: 340rpx;
+  image {
+    height: 340rpx;
+    width: 100%;
+  }
+}
+.cate {
+  display: flex;
+  background-color: #fff;
+  justify-content: space-around;
+  padding: 24rpx 0 29rpx 0;
+  .cate-item {
+  }
+  image {
+    width: 128rpx;
+    height: 128rpx;
+  }
+}
+
+.floor {
+  
+  padding-top: 30rpx;
+  .floor-title {
+    image {
+      width: 750rpx;
+      height: 59rpx;
+    }
+  }
+  .floor-content {
+    background-color: #fff;
+    display: flex;
+    padding: 20rpx 16rpx;
+    .left {
+      margin-right: 10rpx;
+      image {
+        width: 232rpx;
+        height: 386rpx;
+        display: block;
+      }
+    }
+    .right{
+      display: flex;
+      flex-wrap: wrap;
+      image{
+        width:233rpx;
+        height:188rpx;
+        display: block;
+        margin:0 10rpx 10rpx 0;
+        &:last-child{
+          margin:0
+        }
+        &:nth-child(2){
+          margin-right:0
+        }
+        &:nth-child(3){
+          margin-bottom:0
+        }
+      }
+      
+      
+    }
+  }
+}
+.swapper{
+  background-color: #ff2d4a;
+  padding: 20rpx 16rpx;
+  .search{
+    height: 60rpx;
+    background-color: #fff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .icon-sousuo{
+      font-size: 32rpx;
+    }
+  }
+}
+.gotop{
+  width:100rpx;
+  height:100rpx;
+  border-radius: 50%;
+  position: fixed;
+  bottom:50rpx;
+  right:20rpx;
+  background-color: rgba(255, 0, 0, .5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .icon-jiantoushang{
+    font-size: 32rpx;
+  }
+}
+</style>
+<template>
+<!-- 搜索 -->
+  <view class="swapper">
+    <view class="search">
+      <text class="iconfont icon-sousuo"></text>
+      <text></text>
+    </view>
+  </view>
+  <!-- 轮播图 -->
+  <swiper circular="{{true}}" indicator-dots="{{true}}" autoplay="true">
+    <navigator wx:for="{{swiperList}}" wx:key="{{index}}" url="{{item.navigator_url}}">
+      <swiper-item  >
+        <image src="{{item.image_src}}"></image>
+      </swiper-item>
+    </navigator>
+  </swiper>
+  <!--  -->
+  <view class="cate">
+    <view class="cate-item" wx:for="{{cateItemList}}" wx:key="{{index}}"><image src="{{item.image_src}}"></image></view>
+  </view>
+
+  <view class="floor" wx:for="{{floorList}}" wx:key="{{index}}">
+    <view class="floor-title"><image src="{{item.floor_title.image_src}}"></image></view>
+    <view class="floor-content">
+      <view class="left">
+        <image src="{{item.product_list[0].image_src}}" ></image>
+      </view>
+      <view class="right">
+        <image wx:for="{{item.product_list}}" 
+        wx:for-item="item2" wx:for-index="i" 
+        wx:key="{{i}}" 
+        wx:if="{{i != 0}}"
+        src="{{item2.image_src}}"
+        style="{{item2.image_width}}rpx"></image>
+      </view>
+    </view>
+  </view>
+  <!-- 回到顶部 -->
+  <view class="gotop" hidden="{{ishidden}}" @tap="gotoTop">
+    <text class="iconfont icon-jiantoushang"></text>
+    <text>顶部</text>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+import fetch from '../utils/fetch'
+
+export default class Index extends wepy.page {
+  //配置
+  config = {
+    navigationBarTitleText: '不讲武德',
+  };
+  //数据
+  data = {
+    swiperList:[],
+    cateItemList:[],
+    floorList:[],
+    ishidden:true
+  }
+  onLoad() {
+ 
+    this.getSwiper()
+    this.getCateItem()
+    this.getFloor()
+  }
+  //获取轮播图数据
+  async getSwiper(){
+    let res = await fetch({url:'/home/swiperdata'})
+    this.swiperList = res.data.data
+    console.log(res);
+    this.$apply()
+  }
+  //获取分类导航数据
+  async getCateItem(){
+    let res = await fetch({url:'/home/catitems'})
+    console.log(res);
+    this.cateItemList = res.data.data
+    this.$apply()
+  }
+  //获取floor布局中的图片和数据
+  async getFloor(){
+    let res = await fetch({url:'/home/floordata'})
+    console.log(res);
+    this.floorList = res.data.data
+    this.$apply()
+  }
+  //监听页面滚动事件,来显示隐藏回到顶部(异步函数)
+  onPageScroll(option){
+    if(option.scrollTop > 300){
+      this.ishidden = false
+    }else{
+      this.ishidden = true
+    }
+    this.$apply()
+  }
+  //事件的处理函数需要写在methods中
+  methods={
+    //点击圆圈回到顶部
+    gotoTop(){
+      //调用滚动到某位置的方法
+      wepy.pageScrollTo({
+        scrollTop:0,
+        duration:300
+      })
+    }
+  }
+}
+</script>
